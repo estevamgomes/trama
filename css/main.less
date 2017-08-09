@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700|Overpass+Mono:400,700');
+
+@font-body: 'Libre Baskerville', serif;
+@font-header: 'Overpass Mono', monospace;
+
+/////////////////////////
+///////// CORES /////////
+/////////////////////////
+
+@preto: #000;
+@branco: #fff;
+@vermelho: #EB3964;
+@azul: #645ED7; 
+@amarelo: #ffde00;
+@cinzaclaro: #f5f4f0;
+
+@roxo: #7f3fa5; 
+@rosaclaro: #f490c7;
+@rosa: #e51a80; 
+@verdeclaro: #bef4e9;
+@verde: #76ceb5;
+
+
+/////////////////////////////////////
+///////// IMPORTAR ARQUIVOS /////////
+/////////////////////////////////////
+
+@import "normalize";
+@import "main-base";
+@import "main-helper";
+
+/////////////////////////////////////
+///////// DEFINIÇÕES GERAIS /////////
+/////////////////////////////////////
+
+*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+			box-sizing: border-box;
+	-webkit-font-smoothing:antialiased;
+	font-smoothing:antialiased;
+	text-rendering:optimizeLegibility;
+}
+
+img,
+embed,
+object,
+video {
+	max-width: 100%;
+}
+
+img {
+	// vertical-align:bottom;
+}
+
+
+/*
+ * Remove text-shadow in selection highlight.
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+ .selection {
+	background: @roxo;
+	color: @branco;
+	text-shadow:none;
+ }
+
+::selection {
+	.selection;
+}
+::-webkit-selection {
+	.selection;
+}
+::-moz-selection {
+	.selection;
+}
+
+
+//////////////////////////
+///////// ESTILO /////////
+//////////////////////////
+
+html {
+	font-size: 62.5%;
+	font-family: @font-body;
+}
+
+body {
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: @font-header;
+}
+
+h1, h2 {
+	text-transform: uppercase;
+	// letter-spacing: .1em;
+}
+
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.3rem; }
+
+#main-header {
+
+	#main-title {
+		h1 {
+			text-align: center;
+			background: @preto;
+			font-size: 1.6rem;
+			letter-spacing: 1em;
+			margin: 0;
+			color: @branco;
+			padding: 2em;
+		}
+	}
+
+}
+
+section#main {
+	.trama-wrapper {
+		margin-bottom: 10px;
+		// background: url('../img/colores_bg.jpg');
+	}
+}
+
+footer#main-footer {
+	display: none;
+}
+
+
+/////////////////////////////////////
+///////// IMPORTAR ARQUIVOS /////////
+/////////////////////////////////////
+
+@import "main-media-query";
+@import "trama";

@@ -28,10 +28,12 @@ var sim1,
 	sim2;
 
 function tramaStart() {
-	trama.loadAssets();
-
-	var path = "/js/files/",
+	var directory_root = document.location.hostname == "dits" ? 'http://dits' : 'https://estevamgomes.github.io/trama';
+	var scenesPath = directory_root + "/js/files/",
 		ext	 = ".trm";
+
+	var assetsPath = directory_root + "/img/";
+	trama.loadAssets(assetsPath);
 
 	var div1Id = "simulatorA",
 		div2Id = "simulatorB",
@@ -42,13 +44,14 @@ function tramaStart() {
 		scene3 = "scene-sonar";
 
 	trama.ajax({
-		url: path + scene1 + ext,
+		url: scenesPath + scene1 + ext,
 		onload: function(data) {
 			sim1 = new trama.Simulator({
 				scene: data,
 				divId: div1Id,
 				width: "fit",
-				height: "fit"
+				height: "fit",
+				scenesPath: scenesPath
 				// mainmenu: false,
 				// compmenu: false,
 			});
@@ -56,21 +59,23 @@ function tramaStart() {
 	});
 
 	trama.ajax({
-		url: path + scene2 + ext,
+		url: scenesPath + scene2 + ext,
 		onload: function(data) {
 			sim2 = new trama.Simulator({
 				scene: data,
 				divId: div2Id,
+				scenesPath: scenesPath
 			});
 		}
 	});
 
 	trama.ajax({
-		url: path + scene3 + ext,
+		url: scenesPath + scene3 + ext,
 		onload: function(data) {
 			sim3 = new trama.Simulator({
 				scene: data,
-				divId: div3Id
+				divId: div3Id,
+				scenesPath: scenesPath
 			});
 		}
 	});

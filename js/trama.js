@@ -15,9 +15,9 @@
 		 * função: loadAssets()
 		 * descrição: inicia o carregamento dos arquivos externos
 		 */
-		o.loadAssets = function() {
+		o.loadAssets = function(path) {
 			// array com os arquivos que serão carregados
-			var imagesPath = "./img/";
+			var imagesPath = path || "./img/";
 			var images = [
 				// componentes
 				{id: "servo", src: "icones_servo-ani-lg-90.png"},
@@ -199,6 +199,7 @@
 				compmenu = config.hasOwnProperty("compmenu") ? config.compmenu : true, // objeto do menu
 
 				mainmenu = config.hasOwnProperty("mainmenu") ? config.mainmenu : true,
+				scenesPath = config.scenesPath || "",
 				mouseTimer,	// objeto que armazena o timer do mouse
 
 				bin,		// lixeira
@@ -565,8 +566,8 @@
 						text: "CLIQUE PARA CONTINUAR"
 					});
 				} else {
-					if(mainmenu) mainmenu.close();
-					overshadow.alpha = 0; // altera o texto
+					if(mainmenu && mainmenu.hasOwnProperty("close")) mainmenu.close();
+					if(overshadow) overshadow.alpha = 0; // altera o texto
 					messageField.alpha = 0; // altera o texto
 				}
 			}
@@ -808,5 +809,3 @@
 		console.log("trama already defined.");
 	}
 }(window, document));
-
-

@@ -23,7 +23,8 @@
 				{id: "servo", src: "icones_servo-ani-lg-90.png"},
 				{id: "led",	  src: "icones_led-sim.png"},
 				{id: "sonar", src: "icones_sonar.png"},
-				{id: "background", src: "background_dot.png"}
+				// {id: "background", src: "background_dot.png"}
+				{id: "background", src: "background_dot_03.png"}
 				// {id: "background", src: "bg-grid-01.png"}
 				// {id: "background", src: "bg-grid-02.png"}
 			];
@@ -73,7 +74,7 @@
 		 */
 		function handleKeyPress(e) {
 			for (var i = 0; i < simulatorArray.length; i++) {
-				simulatorArray[i].handleKeyPress(e);
+				if(!simulatorArray[i].paused) simulatorArray[i].handleKeyPress(e);
 			};
 		}
 
@@ -85,7 +86,7 @@
 		 */
 		function handleKeyUp(e) {
 			for (var i = 0; i < simulatorArray.length; i++) {
-				simulatorArray[i].handleKeyUp(e);
+				if(!simulatorArray[i].paused) simulatorArray[i].handleKeyUp(e);
 			};
 		}
 
@@ -203,7 +204,6 @@
 				mouseTimer,	// objeto que armazena o timer do mouse
 
 				bin,		// lixeira
-				paused,
 				simObj = this,
 				autoplay = config.hasOwnProperty("autoplay") ? config.autoplay : true,
 
@@ -213,6 +213,9 @@
 				messageField,	// campo para exibir as mensagens
 				overshadow,
 				framerate;
+			
+			this.paused = false;
+			this.styleScheme = JSON.parse(JSON.stringify(defaultStyleScheme));
 
 			var scene = config.scene || false,
 				div   = document.getElementById(config.divId) || false;
@@ -235,15 +238,15 @@
 			
 			// canvas
 			canvas = stage.canvas;
-			canvas.style.backgroundColor = styleScheme.main.background; // altera a cor do canvas
+			canvas.style.backgroundColor = this.styleScheme.main.background; // altera a cor do canvas
 
 
 			// mensagem de loading
 			messageField = new createjs.Text();
 			messageField.set({
 				text: "CARREGANDO",
-				font: styleScheme.main.loadingFont,
-				color: styleScheme.main.loadingText,
+				font: this.styleScheme.main.loadingFont,
+				color: this.styleScheme.main.loadingText,
 				maxWidth: 1000,
 				textAlign: "center",
 				textBaseline: "middle",
@@ -292,7 +295,8 @@
 				if(mainmenu) {
 					mainmenu = new MainMenu({
 						div: div,
-						simObj: this
+						simObj: this,
+						scenesPath: scenesPath
 					});
 				}
 
@@ -303,7 +307,7 @@
 				stage.snapToPixelEnabled = true;
 
 				// atualiza o esquema de estilo a partir do arquivo carregado
-				// if(scene) Object.assign(styleScheme, scene.styleScheme);
+				// if(scene) Object.assign(this.styleScheme, scene.styleScheme);
 
 				//////////////////
 				//// workarea ////
@@ -319,7 +323,7 @@
 					// tamanho da célula do grid
 					cellSize: 10,
 					// cores e estilo da grid
-					styleScheme: styleScheme.workarea,
+					styleScheme: this.styleScheme.workarea,
 					background: preload.getResult("background")
 				};
 				if(scene) Object.assign(workareaConfig, scene.workarea);
@@ -330,7 +334,7 @@
 				//////////////////
 
 				connectionContainer = new ConnectionContainer({
-					styleScheme: styleScheme.connection,
+					styleScheme: this.styleScheme.connection,
 					workarea: workarea
 				});
 				workarea.addChild(connectionContainer);
@@ -347,7 +351,7 @@
 						sonar: preload.getResult("sonar"),
 						led: preload.getResult("led")
 					},
-					styleScheme: styleScheme.component,
+					styleScheme: this.styleScheme.component,
 					workarea: workarea,
 					connectionContainer: connectionContainer
 				});
@@ -363,7 +367,7 @@
 				// component menu
 				if(compmenu) {
 					compmenu = new MenuRoot({
-						styleScheme: styleScheme.menu,
+						styleScheme: this.styleScheme.menu,
 						draft: 	menuDraft,
 						radius: 20,
 						componentContainer: componentContainer
@@ -371,7 +375,7 @@
 
 					// timer para abrir o menu com o clique do mouse
 					mouseTimer = new MouseTimer({
-						styleScheme: styleScheme.mouseTimer,
+						styleScheme: this.styleScheme.mouseTimer,
 					});
 					workarea.addChild(mouseTimer, compmenu);
 				}
@@ -398,7 +402,7 @@
 
 				// lixeira
 				bin = new Bin({
-					styleScheme: styleScheme.bin,
+					styleScheme: this.styleScheme.bin,
 					workarea: workarea,
 					componentContainer: componentContainer,
 					// altura e largura da área visível, correpondetnte ao canvas
@@ -414,8 +418,8 @@
 				framerate = new createjs.Text();
 				framerate.set({
 					text: "Framerate",
-					font: styleScheme.main.framerateFont,
-					color: styleScheme.main.framerateText,
+					font: this.styleScheme.main.framerateFont,
+					color: this.styleScheme.main.framerateText,
 					maxWidth: 1000,
 					textAlign: "left",
 					textBaseline: "top",
@@ -525,7 +529,7 @@
 				}
 
 				o.pauseChildren();
-				if(paused) simObj.setPaused(false);
+				if(simObj.paused) simObj.setPaused(false);
 			}
 
 
@@ -548,12 +552,12 @@
 			 * descrição: 
 			 */
 			this.setPaused = function(value) {
-				paused = value;
-				if(paused) {
+				this.paused = value;
+				if(this.paused) {
 					if(overshadow) {
 						overshadow.alpha = .8; // altera o texto
 						overshadow.graphics.clear()
-							.beginFill(styleScheme.main.overshadow)
+							.beginFill(this.styleScheme.main.overshadow)
 							.drawRect(0, 0, canvas.width, canvas.height);
 					}
 
@@ -566,7 +570,7 @@
 						text: "CLIQUE PARA CONTINUAR"
 					});
 				} else {
-					if(mainmenu && mainmenu.hasOwnProperty("close")) mainmenu.close();
+					if(mainmenu && typeof mainmenu.close === 'function') mainmenu.close();
 					if(overshadow) overshadow.alpha = 0; // altera o texto
 					messageField.alpha = 0; // altera o texto
 				}
@@ -578,7 +582,7 @@
 			 * descrição: função que executa o loop;
 			 */
 			function tick(event) {
-				if(!paused) {
+				if(!simObj.paused) {
 					framerate.text = Math.roundTo(createjs.Ticker.getMeasuredFPS(), 2) + " / " + Math.roundTo(createjs.Ticker.framerate, 2);
 					if(compmenu) mouseTimer.tick();
 					connectionContainer.tick();
@@ -600,7 +604,7 @@
 
 				if(overshadow) {
 					overshadow.graphics.clear()
-						.beginFill(styleScheme.main.overshadow)
+						.beginFill(this.styleScheme.main.overshadow)
 						.drawRect(0, 0, canvas.width, canvas.height);
 				}
 
@@ -741,7 +745,7 @@
 					component: componentContainer.exportCurrentScene(),
 					connection: connectionContainer.exportCurrentScene(),
 					workarea: workarea.exportCurrentScene(),
-					styleScheme: styleScheme,
+					styleScheme: this.styleScheme,
 				};
 
 				var data = {a:1, b:2, c:3};
@@ -792,9 +796,9 @@
 			 */
 			var wireType = ["bezier", "ortho", "diagonal", "line"];
 			function changeWireType() {
-				var index = wireType.indexOf(styleScheme.connection.default.wireType);
+				var index = wireType.indexOf(simObj.styleScheme.connection.default.wireType);
 				index = index < wireType.length - 1 ? index + 1 : 0;
-				styleScheme.connection.default.wireType = wireType[index];
+				simObj.styleScheme.connection.default.wireType = wireType[index];
 			}
 
 		}
